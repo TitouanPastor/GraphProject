@@ -1,0 +1,15 @@
+Associer des élèves à des écoles a l'aide du stable marriage
+
+Classes:
+    - école :
+        - nom
+        - capacité
+        - élèves (liste ordonnée)
+    - élève :
+        - nom
+        - écoles (liste ordonnée)
+
+    Parser le fichier XLS
+        Créer une liste d'école
+        Créer une liste d'élève
+        Pour chaque ligne du fichier
