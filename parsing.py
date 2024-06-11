@@ -5,7 +5,7 @@ from Student import *
 from School import *
 
 
-def parse_xlsx(file_path, sheet_index):
+def parse_xlsx(file_path, sheet_index, debugging):
     df = pd.read_excel(file_path, sheet_index)
 
     # create all students (starting at cell 2 of line 0)
@@ -28,31 +28,34 @@ def parse_xlsx(file_path, sheet_index):
         i = 2
         studentIndex = 0
         while i < len(row):
-            studentList[studentIndex].setPriority(row.get(i))
+            studentList[studentIndex].setPriority(row.iloc[i])
             school.add_student(studentList[studentIndex])
             studentIndex += 1
             i += 2
         # sort the students by priority inside the school
-        school.students.sort(key=lambda x: x.priority)
-        print("adding school: " + str(school))
+        school.preferenceList.sort(key=lambda x: x.priority)
         schoolList.append(school)
-        print("--------------------------------")
+        if debugging:
+            print("adding school: " + str(school))
+            print("--------------------------------")
 
     header = df.columns.values.tolist()
     i = 2
     studentIndex = 0
     while i < len(header):
         # for each line (ie each school)
-        print("Processing student: " + header[i])
+        if debugging:
+            print("Processing student: " + header[i])
         schoolIndex = 0
         for index, row in df.iterrows():
-            schoolList[schoolIndex].setPriority(row.get(i + 1))
+            schoolList[schoolIndex].setPriority(row.iloc[i + 1])
             studentList[studentIndex].add_school(schoolList[schoolIndex])
             schoolIndex += 1
         # sort the schools by priority inside the student
-        studentList[studentIndex].schools.sort(key=lambda sch: sch.priority)
-        print("Modifying student school list: " + ", ".join
-        (school.name for school in studentList[studentIndex].schools) + "\n")
+        studentList[studentIndex].preferenceList.sort(key=lambda sch: sch.priority)
+        if debugging:
+            print("Modifying student school list: " + ", ".join
+            (school.name for school in studentList[studentIndex].preferenceList) + "\n")
         studentIndex += 1
         i += 2
 

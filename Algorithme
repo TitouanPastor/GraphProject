@@ -13,3 +13,97 @@ Classes:
         Créer une liste d'école
         Créer une liste d'élève
         Pour chaque ligne du fichier
+
+Stable marriage à partir des listes
+
+    //Choix du minimum
+    //Menu avec le choix de l'algo -> élèves aux balcons ou écoles au balcon
+
+    entier assignations <- 0
+    entier minimum
+
+    int Result[Liste de taille schoolList.lenght, Liste de taille studentList.lenght]
+
+    entier indice
+
+    entier jour <- 1
+
+    //Algo avec les écoles aux balcons
+    tant que assignations =! minimum
+
+        POUR chaque élève dans la liste des élèves (i)
+
+            //En tete avec les étudiants (ligne 0)
+            Result[0][i] <- StudentList[i]
+        fin POUR
+
+        POUR chaque ecole dans la liste des écoles (i)
+            compteur <- 0
+            capacite <- ecole.capacite
+
+            Tant que capacite != 0
+
+                Pour chaque eleve FAIRE (j) //On essaie de trouver l'eleve de preference compteur
+                    SI capacite != 0
+
+                        //Si l'indice du student dans l'école est à la valeur de compteur
+                        SI indice de l'étudiant courant de SchoolList[i] == compteur
+
+                        Result[jour][j] <- SchoolList[i]    //La case du tableau reçoit l'école
+                        compteur <- compteur ++
+                        capacite <- capacite --
+                FIN POUR
+            FIN TANT QUE
+        Fin pour
+
+
+        //Pendant la nuit
+        POUR chaque élève dans le header (i)
+
+            //On met dans prefere l'indice de l'école la moins preferée de l'étudiant
+            Liste prefere(1..capa) <- StudentList[i].schoolList[schoolList.size()]
+
+            POUR chaque école dans la liste de la case Result[jour][i]
+
+                //Chercher l'indice de l'école dans la liste StudentList[i].schoolList[]
+
+                SI l'indice de l'école < prefere ALORS
+                    prefere <- indice
+                FIN SI
+            FIN POUR
+
+            //Ecraser la liste dans la case Result[jour][i]
+            Result[jour][i] <-  SudentList[i].schoolList[prefere]
+
+
+            //Pendant la journée
+
+                POUR chaque ecole dans la liste des écoles FAIRE
+                    SI
+
+
+
+
+                Pour chaque école dans la case Result[jour][j]
+                    SI Result[jour][j] contient StudentList[j].schoolList[assignation]
+                        studentList[j] choisi schoolList[assignation]
+                    SINON
+                        studenList[]
+
+            Result[j][1] <- SchoolList[i].studentList[j]
+        fin pour
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
