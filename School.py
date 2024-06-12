@@ -6,6 +6,7 @@ class School:
         self.capacity = capacity
         self.priority = None
         self.preferenceList = []
+        self.assignedList = []
 
     def setPriority(self, priority):
         self.priority = priority

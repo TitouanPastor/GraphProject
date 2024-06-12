@@ -6,6 +6,7 @@ class Student:
         self.name = name
         self.preferenceList = []
         self.capacity = 1
+        self.assignedList = []
 
     def setPriority(self, priority):
         self.priority = priority
