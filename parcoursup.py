@@ -61,6 +61,16 @@ def stableMariage(choix):
     print("---> Day " + str(day) + ":")
     print(result[day])
 
+    #at the night, each wife will choose the best husband (1 to capacity)
+    for wife in wifeList:
+        # foreach husband in the wife preference list
+        for husband in wife.preferenceList:
+            # if the husband is in the result list
+            if result[day][wifeList.index(wife)] is not None and husband in result[day][wifeList.index(wife)]:
+                print(wife.name + " accept " + husband.name)
+                currentAssignationNumber += 1
+                break
+
 
 # while currentAssignationNumber < assignationNumber:
 
