@@ -65,8 +65,8 @@ def stableMariage(choix, sc="sc-1"):
 
     currentAssignationNumber = 0
     day = 1
-
-    while currentAssignationNumber < assignationNumber:
+    Moreproposals = 1
+    while Moreproposals:
 
         print("--------------------------------------------------")
         print("Day " + str(day))
@@ -74,14 +74,17 @@ def stableMariage(choix, sc="sc-1"):
         # at day, each husband will propose to his capacity wife(s)
         for husband in husbandList:
             for i in range(husband.capacity):
-                wife = husband.preferenceList[i]
-                # fill result[day][len(wifeList)] with a empty list
-                if result[day][wifeList.index(wife)] is None:
-                    result[day][wifeList.index(wife)] = []
-                print(husband.name + " propose to " + wife.name)
-                result[day][wifeList.index(wife)].append(husband)
+                if i < len(husband.preferenceList):
+                    wife = husband.preferenceList[i]
+                    # fill result[day][len(wifeList)] with a empty list
+                    if result[day][wifeList.index(wife)] is None:
+                        result[day][wifeList.index(wife)] = []
+                    print(husband.name + " propose to " + wife.name)
+                    result[day][wifeList.index(wife)].append(husband)
+
         print("-> Day " + str(day) + " result: " + str(result[day]))
         # at the night, each wife will choose the best husband (1 to capacity)
+        countkick = 0
         for wife in wifeList:
             # foreach husband in the wife preference list
             acceptationCounter = 0
@@ -94,13 +97,16 @@ def stableMariage(choix, sc="sc-1"):
                     worstHusband = wife.preferenceList[index]
                     if worstHusband in result[day][wifeList.index(wife)]:
                         print("      x " + wife.name + " kicked " + worstHusband.name)
+                        countkick += 1
                         result[day][wifeList.index(wife)].remove(worstHusband)
                         # don't come back to the same husband
                         worstHusband.preferenceList.remove(wife)
                     index -= 1
-
+        if countkick == 0:
+            Moreproposals = 0
         print("-> Night " + str(day) + " result: " + str(result[day]))
         day += 1
+
 
 choix = ""
 scenario = ""
