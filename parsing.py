@@ -5,8 +5,7 @@ from Student import *
 from School import *
 
 
-def parse_xlsx(file_path, sheet_index, debugging):
-    df = pd.read_excel(file_path, sheet_index)
+def parse_xlsx(df, debugging):
 
     # create all students (starting at cell 2 of line 0)
     studentList = []
