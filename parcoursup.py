@@ -1,4 +1,3 @@
-import numpy as np
 import pandas as pd
 import parsing
 from error_detection import check_integrity

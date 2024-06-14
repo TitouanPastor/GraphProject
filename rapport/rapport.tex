@@ -1,0 +1,144 @@
+\documentclass{article}
+
+\usepackage{graphicx}
+\usepackage{fancyhdr}
+\usepackage{geometry}
+\usepackage{tocloft}
+
+% Page layout
+\geometry{a4paper, margin=1in}
+
+% Fancy header
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{Titouan Pastor and Margot Bonafos}
+\fancyhead[R]{\today}
+\fancyfoot[C]{\thepage}
+
+% Title page
+\title{Stable Marriage Problem Implementation Report}
+\author{Titouan Pastor and Margot Bonafos}
+\date{\today}
+
+\begin{document}
+
+% Title page
+\begin{titlepage}
+    \centering
+    \vspace*{1in}
+    {\huge\bfseries Stable Marriage Problem Implementation Report\par}
+    \vspace{1.5in}
+    {\Large\itshape Titouan Pastor and Margot Bonafos\par}
+    \vfill
+    Supervised by\par
+    Jaklari Gentian\par
+    \vfill
+    {\large \today\par}
+\end{titlepage}
+
+% Table of contents
+\tableofcontents
+\newpage
+
+\section{Introduction}
+
+\subsection{Problem Statement}
+The stable marriage problem is a classic problem in graph theory and game theory. It involves finding a stable matching between two equally sized sets of elements, where stability means that there are no two elements that would prefer each other over their current partners. This project models this problem to assign students to schools, inspired by the French Parcoursup system, where schools can accept multiple students.
+
+\subsection{Team}
+This project was implemented by Titouan Pastor and Margot Bonafos under the guidance of Jaklari Gentian for a course in graph theory. Our goal was to explore and solve a real-world problem using theoretical concepts learned during the course.
+
+\section{Algorithm Description}
+We used the Gale-Shapley algorithm, also known as the deferred acceptance algorithm, to solve the stable marriage problem. The algorithm operates as follows:
+
+\begin{itemize}
+    \item Each student proposes to their top-choice school.
+    \item Each school tentatively accepts proposals up to its capacity and rejects the rest.
+    \item Rejected students propose to their next choice, and schools reconsider the new proposals along with those tentatively accepted, again retaining up to their capacity.
+    \item This process repeats until no more rejections occur.
+\end{itemize}
+
+In our adaptation, we modified the algorithm to handle the multiple capacities of schools. This means schools can tentatively accept up to \( n \) students where \( n \) is the school's capacity.
+
+\section{Implementation}
+The implementation was done in Python, utilizing the following key components:
+
+\begin{itemize}
+    \item **Data Input:** Preferences for students and schools are read from an Excel (.xlsx) file, with each sheet representing a different scenario.
+    \item **Data Structures:** Lists and dictionaries store preferences and current matchings.
+    \item **Algorithm:** The modified Gale-Shapley algorithm is implemented to handle multiple capacities for schools.
+    \item **Integrity Check:** A script checks the input data for consistency and correctness before running the algorithm.
+    \item **Visualization:** Results are visualized using a graph where nodes represent students and schools, and edges represent matchings.
+\end{itemize}
+
+\section{User Manual}
+To run the algorithm, follow these steps:
+
+\begin{enumerate}
+    \item Ensure you have Python and the necessary libraries installed. Use the `requirements.txt` file to install dependencies:
+    \begin{verbatim}
+    pip install -r requirements.txt
+    \end{verbatim}
+    \item Prepare the input Excel file with the correct format: each sheet should represent a different scenario with students' and schools' preferences.
+    \item Run the script by executing:
+    \begin{verbatim}
+    python parcoursup.py
+    \end{verbatim}
+    \item The script will check the integrity of the Excel file. If errors are found, you will be prompted to correct them.
+    \item After successful validation, the algorithm will run and produce a stable matching. Results will be displayed graphically and saved to a file if specified.
+\end{enumerate}
+
+\section{Algorithm Results}
+We tested the algorithm on several scenarios, including:
+
+\begin{itemize}
+    \item **Handmade Cases:** Manually created scenarios to test specific conditions and edge cases.
+    \item **Random Cases:** Automatically generated scenarios to test the algorithm's robustness and performance.
+\end{itemize}
+
+The results demonstrated that the algorithm quickly finds stable solutions. For example, in scenarios with varying school capacities and student preferences, the algorithm consistently produced matchings where no student and school pair would prefer each other over their current assignments.
+
+\subsection{Case Study: Handmade Scenario}
+In one handmade scenario, we tested a case with three schools and six students, where:
+
+\begin{itemize}
+    \item School A had a capacity of 2
+    \item School B had a capacity of 3
+    \item School C had a capacity of 1
+\end{itemize}
+
+The preferences were arranged to create potential conflicts and test the algorithm's ability to find a stable solution. The results showed that all schools filled their capacities without any unstable pairs.
+
+\subsection{Case Study: Random Scenario}
+In a random scenario with 10 schools and 50 students, each school's capacity was randomly set between 1 and 10. Preferences were randomly generated. The algorithm efficiently processed this larger dataset, resulting in a stable matching in under a second.
+
+\section{Graphs}
+We included graphical visualizations of the results. In these graphs:
+
+\begin{itemize}
+    \item Students and schools are represented as nodes.
+    \item Edges between nodes represent matchings.
+    \item The graph allows for a clear visual verification of stability and completeness.
+\end{itemize}
+
+\begin{figure}[h]
+    \centering
+    \caption{Example of stable matching graph}
+    \label{fig:result_graph}
+\end{figure}
+
+\section{File Integrity}
+We developed an integrity check script to ensure the input Excel file is correctly formatted. The script checks:
+
+\begin{itemize}
+    \item Non-zero capacities for schools.
+    \item No duplicate preferences.
+    \item Consistency in the number of students and schools.
+\end{itemize}
+
+If an error is detected, the user is informed to correct the data. This ensures that the algorithm runs smoothly and produces valid results.
+
+\section{Conclusion}
+Our implementation of the stable marriage problem, adapted for assigning students to schools with multiple capacities, demonstrates that the Gale-Shapley algorithm can be effectively extended for more complex scenarios. The consistent results and useful visualizations validate the effectiveness of our approach. This project highlights the practical application of theoretical concepts in solving real-world problems.
+
+\end{document}
