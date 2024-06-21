@@ -4,6 +4,10 @@
 \usepackage{fancyhdr}
 \usepackage{geometry}
 \usepackage{tocloft}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{soul}
+\usepackage{xcolor}
 
 % Page layout
 \geometry{a4paper, margin=1in}
@@ -28,10 +32,14 @@
     \vspace*{1in}
     {\huge\bfseries Stable Marriage Problem Implementation Report\par}
     \vspace{1.5in}
-    {\Large\itshape Titouan Pastor and Margot Bonafos\par}
+    {\Large\itshape Margot Bonafos and Titouan Pastor\par}
+    \begin{figure}[h]
+        \centering
+        \includegraphics[width=0.7\textwidth]{img/sc-4-student.png}
+    \end{figure}
     \vfill
     Supervised by\par
-    Jaklari Gentian\par
+    Jakllari Gentian\par
     \vfill
     {\large \today\par}
 \end{titlepage}
@@ -43,77 +51,238 @@
 \section{Introduction}
 
 \subsection{Problem Statement}
+\hspace{0.5cm}
 The stable marriage problem is a classic problem in graph theory and game theory. It involves finding a stable matching between two equally sized sets of elements, where stability means that there are no two elements that would prefer each other over their current partners. This project models this problem to assign students to schools, inspired by the French Parcoursup system, where schools can accept multiple students.
 
 \subsection{Team}
-This project was implemented by Titouan Pastor and Margot Bonafos under the guidance of Jaklari Gentian for a course in graph theory. Our goal was to explore and solve a real-world problem using theoretical concepts learned during the course.
+\hspace{0.5cm}
+This project was implemented by Titouan Pastor and Margot Bonafos under the guidance of Jakllari Gentian for a course in graph theory. Our goal was to explore and solve a real-world problem using theoretical concepts learned during the course.
 
 \section{Algorithm Description}
-We used the Gale-Shapley algorithm, also known as the deferred acceptance algorithm, to solve the stable marriage problem. The algorithm operates as follows:
+\hspace{0.5cm}
+We used the exact same algorithm viewed during course, which will represent wives bidding for husbands. A wife can be the school or the student. The algorithm is as follows:
 
-\begin{itemize}
-    \item Each student proposes to their top-choice school.
-    \item Each school tentatively accepts proposals up to its capacity and rejects the rest.
-    \item Rejected students propose to their next choice, and schools reconsider the new proposals along with those tentatively accepted, again retaining up to their capacity.
-    \item This process repeats until no more rejections occur.
-\end{itemize}
+% add a title
+\begin{algorithm}
+    \caption{Refinement of the Algorithm}
+    \begin{algorithmic}[1]
+        \State Moreproposals $\gets$ 1
+        \While{Moreproposals}
+        \State countProposals $\gets$ 0
+        \For{each husband in husbandList}
+        \For{$i = 0$ to husband.capacity}
+        \If{$i < |husband.preferenceList|$}
+        \State wife $\gets$ husband.preferenceList[$i$]
+        \If{result[day][wifeList.index(wife)] is None}
+        \State result[day][wifeList.index(wife)] $\gets$ []
+        \EndIf
+        \State result[day][wifeList.index(wife)].append(husband)
+        \State husband.capacity $\gets$ husband.capacity - 1
+        \State countProposals $\gets$ countProposals + 1
+        \EndIf
+        \EndFor
+        \EndFor
+        \If{countProposals == 0}
+        \State Moreproposals $\gets$ 0
+        \State displayResult(day, result, wifeList)
+        \State displayGraph(day, debugging, husbandList, result, wifeList)
+        \Else
+        \For{each wife in wifeList}
+        \If{result[day][wifeList.index(wife)] is not None}
+        \While{$|result[day][wifeList.index(wife)]| > wife.capacity$}
+        \State remove worstHusband from result[day][wifeList.index(wife)]
+        \State update worstHusband's preferenceList and capacity
+        \EndWhile
+        \State result[day+1][wifeList.index(wife)] $\gets$ result[day][wifeList.index(wife)]
+        \For{each husband in result[day][wifeList.index(wife)]}
+        \State remove wife from husband's preferenceList
+        \EndFor
+        \EndIf
+        \EndFor
+        \EndIf
+        \State day $\gets$ day + 1
+        \EndWhile
+    \end{algorithmic}
+\end{algorithm}
 
 In our adaptation, we modified the algorithm to handle the multiple capacities of schools. This means schools can tentatively accept up to \( n \) students where \( n \) is the school's capacity.
+
+We also ommitted the parsing algorithm with the excel file as this is not taking part of the stable mariage one. Before running our main algorithm, we parse the excel page(parsing.py), we create a list of students and a list of schools. Each student has a list of preferences for schools and each school has a list of preferences for students. We also have the capacities of each school. We then run the algorithm on this data after checking its integrity(see section 7).
 
 \section{Implementation}
 The implementation was done in Python, utilizing the following key components:
 
 \begin{itemize}
-    \item **Data Input:** Preferences for students and schools are read from an Excel (.xlsx) file, with each sheet representing a different scenario.
-    \item **Data Structures:** Lists and dictionaries store preferences and current matchings.
-    \item **Algorithm:** The modified Gale-Shapley algorithm is implemented to handle multiple capacities for schools.
-    \item **Integrity Check:** A script checks the input data for consistency and correctness before running the algorithm.
-    \item **Visualization:** Results are visualized using a graph where nodes represent students and schools, and edges represent matchings.
+    \item \textbf{Data Input:} Preferences for students and schools are read from an Excel (.xlsx) file, with each sheet representing a different scenario.
+    \item \textbf{Data Structures:} Lists and dictionaries store preferences and current matchings.
+    \item \textbf{Algorithm:} The modified stable mariage algorithm is implemented to handle multiple capacities for schools.
+    \item \textbf{Integrity Check:} A script checks the input data for consistency and correctness before running the algorithm.
+    \item \textbf{Visualization:} Results are visualized using a graph where nodes represent students and schools, and edges represent matchings.
 \end{itemize}
 
 \section{User Manual}
 To run the algorithm, follow these steps:
 
 \begin{enumerate}
-    \item Ensure you have Python and the necessary libraries installed. Use the `requirements.txt` file to install dependencies:
-    \begin{verbatim}
+    \item Ensure you have Python 3 and the necessary libraries installed. Use the `requirements.txt` file to install dependencies:
+          \begin{verbatim}
     pip install -r requirements.txt
     \end{verbatim}
-    \item Prepare the input Excel file with the correct format: each sheet should represent a different scenario with students' and schools' preferences.
+    \item Prepare the input Excel file with the correct format: each sheet should represent a different scenario with students' and schools' preferences. It is already filled with some scenarios.
     \item Run the script by executing:
-    \begin{verbatim}
+          \begin{verbatim}
     python parcoursup.py
     \end{verbatim}
     \item The script will check the integrity of the Excel file. If errors are found, you will be prompted to correct them.
     \item After successful validation, the algorithm will run and produce a stable matching. Results will be displayed graphically and saved to a file if specified.
 \end{enumerate}
 
+\newpage{}
 \section{Algorithm Results}
 We tested the algorithm on several scenarios, including:
 
 \begin{itemize}
-    \item **Handmade Cases:** Manually created scenarios to test specific conditions and edge cases.
-    \item **Random Cases:** Automatically generated scenarios to test the algorithm's robustness and performance.
+    \item \textbf{Handmade Cases:} Manually created scenarios to test specific conditions and edge cases.
+
+    \item \textbf{Random Cases:} Automatically generated scenarios to test the algorithm's robustness and performance.
 \end{itemize}
 
 The results demonstrated that the algorithm quickly finds stable solutions. For example, in scenarios with varying school capacities and student preferences, the algorithm consistently produced matchings where no student and school pair would prefer each other over their current assignments.
 
 \subsection{Case Study: Handmade Scenario}
-In one handmade scenario, we tested a case with three schools and six students, where:
+
+\subsubsection{Scenario SC-3}
 
 \begin{itemize}
-    \item School A had a capacity of 2
-    \item School B had a capacity of 3
-    \item School C had a capacity of 1
+    \item Input tab
 \end{itemize}
 
-The preferences were arranged to create potential conflicts and test the algorithm's ability to find a stable solution. The results showed that all schools filled their capacities without any unstable pairs.
+\begin{tabular}{|c|c|c|c|c|c|c|}
+    \hline
+    \textbf{Capacity} & \textbf{Schools} & \textbf{s1} & \textbf{s2} & \textbf{s3} & \textbf{s4} & \textbf{s5} \\
+    \hline
+    12                & e1               & 4 - 3       & 2 - 3       & 1 - 2       & 5 - 1       & 3 - 4       \\
+    \hline
+    1                 & e2               & 3 - 4       & 1 - 2       & 4 - 4       & 5 - 2       & 2 - 3       \\
+    \hline
+    1                 & e3               & 2 - 1       & 1 - 1       & 3 - 1       & 5 - 4       & 4 - 2       \\
+    \hline
+    3                 & e4               & 3 - 2       & 1 - 4       & 4 - 3       & 2 - 3       & 5 - 1       \\
+    \hline
+\end{tabular}
 
-\subsection{Case Study: Random Scenario}
-In a random scenario with 10 schools and 50 students, each school's capacity was randomly set between 1 and 10. Preferences were randomly generated. The algorithm efficiently processed this larger dataset, resulting in a stable matching in under a second.
+\section*{}
+\begin{itemize}
+    \item Results when Students are wifes
+\end{itemize}
 
+\begin{tabular}{|c|c|c|c|c|c|}
+    \hline
+          & S1      & S2                & S3      & S4      & S5           \\
+    \hline
+    Day 1 & e1 - e4 & e1 - e2 - e3 - e4 & e1      & e1 - e4 & e1           \\
+    \hline
+    Day 2 & e4      & e3                & e1 - e4 & e1      & e1 - e2 - e4 \\
+    \hline
+    Day 3 & e4 - e2 & e3                & e1      & e1      & e4           \\
+    \hline
+    Day 4 & e4      & e3                & e1      & e1      & e4           \\
+    \hline
+\end{tabular}
+
+\begin{figure}[h]
+    \hspace{0.5cm}
+    \includegraphics[width=0.4\textwidth]{img/sc-3-s.png}
+\end{figure}
+\newpage
+\begin{itemize}
+    \item Results when Schools are wifes
+\end{itemize}
+
+\begin{tabular}{|c|c|c|c|c|c|}
+    \hline
+          & E1      & E2 & E3           & E4      \\
+    \hline
+    Day 1 & S4      &    & S1 - S2 - S3 & S5      \\
+    \hline
+    Day 2 & S4 - S3 &    & S2           & S5 - S1 \\
+    \hline
+\end{tabular}
+\begin{figure}[h]
+    \hspace{0.5cm}
+    \includegraphics[width=0.4\textwidth]{img/sc-3-sch.png}
+\end{figure}
+
+\subsubsection{Scenario SC5}
+
+\begin{itemize}
+    \item Input tab
+\end{itemize}
+
+\begin{tabular}{|c|c|c|c|c|c|}
+    \hline
+    \textbf{Capacity} & \textbf{Schools} & \textbf{s1} & \textbf{s2} & \textbf{s3} & \textbf{s4} \\
+    \hline
+    1                 & e1               & 1 - 1       & 4 -1        & 3 - 1       & 2 - 2       \\
+    \hline
+    2                 & e2               & 4 - 2       & 3 -3        & 2 - 3       & 1 - 1       \\
+    \hline
+    1                 & e3               & 2 - 3       & 1 - 2       & 3 - 2       & 4 - 3       \\
+    \hline
+    1                 & e4               & 3 - 4       & 2- 4        & 4 - 4       & 1 - 4       \\
+    \hline
+\end{tabular}
+
+\section*{}
+\begin{itemize}
+    \item Results when Students are wifes
+\end{itemize}
+
+\begin{tabular}{|c|c|c|c|c|}
+    \hline
+          & S1      & S2      & S3 & S4      \\
+    \hline
+    Day 1 & e1      & e3      & e2 & e2 - e4 \\
+    \hline
+    Day 2 & e1      & e3 - e4 & e2 & e2      \\
+    \hline
+    Day 3 & e1 - e4 & e3      & e2 & e2      \\
+    \hline
+    Day 4 & e1      & e3 - e4 & e2 & e2      \\
+    \hline
+    Day 5 & e1      & e3      & e2 & e2      \\
+    \hline
+\end{tabular}
+
+\begin{figure}[h]
+    \hspace{0.5cm}
+    \includegraphics[width=0.4\textwidth]{img/sc-5-s.png}
+\end{figure}
+\newpage
+\begin{itemize}
+    \item Results when Schools are wifes
+\end{itemize}
+
+\begin{tabular}{|c|c|c|c|c|}
+    \hline
+          & E1           & E2      & E3      & E4 \\
+    \hline
+    Day 1 & S1 - s2 - s3 & S4      &         &    \\
+    \hline
+    Day 2 & S1           & S4      & s2 - S3 &    \\
+    \hline
+    Day 3 & S1           & S4 - s3 & S2      &    \\
+    \hline
+\end{tabular}
+
+\begin{figure}[h]
+    \hspace{0.5cm}
+    \includegraphics[width=0.4\textwidth]{img/sc-5-sch.png}
+\end{figure}
+
+To conclude, we find the same results when we do it by hand and via the algorithm.
 \section{Graphs}
-We included graphical visualizations of the results. In these graphs:
+We included graphical visualizations of the results with the package networkx. In these graphs:
 
 \begin{itemize}
     \item Students and schools are represented as nodes.
@@ -123,9 +292,13 @@ We included graphical visualizations of the results. In these graphs:
 
 \begin{figure}[h]
     \centering
-    \caption{Example of stable matching graph}
+    % include first image
+    \includegraphics[width=0.8\textwidth]{img/sc-5-student.png}
+    \caption{Example of stable matching graph (sc-4)}
     \label{fig:result_graph}
 \end{figure}
+
+As you can see here, the graph shows the stable matching between students and schools. Students are on the left representing the wives and schools are on the right representing the husbands. The edges represent the matchings between students and schools. The graph is a clear visual representation of the stable matching found by the algorithm.
 
 \section{File Integrity}
 We developed an integrity check script to ensure the input Excel file is correctly formatted. The script checks:
@@ -137,8 +310,39 @@ We developed an integrity check script to ensure the input Excel file is correct
 \end{itemize}
 
 If an error is detected, the user is informed to correct the data. This ensures that the algorithm runs smoothly and produces valid results.
+Exemple
+
+\subsection{Exemple with scenario SC-9 : duplicate of preferences}
+
+\begin{itemize}
+    \item Input tab
+\end{itemize}
+
+\sethlcolor{orange}
+
+\begin{tabular}{|c|c|c|c|c|c|c|}
+    \hline
+    \textbf{Capacity} & \textbf{Schools} & \textbf{s1} & \textbf{s2} & \textbf{s3} &       \\
+    \hline
+    1                 & e1               & 1 - 1       & 2 - 1       & 1 - 2       & 3 - 1 \\
+    \hline
+    1                 & e2               & 1 -\hl{ 3 }     & 3 - 3       & 4 - 4       & 2 - 3 \\
+    \hline
+    1                 & e3               & 2 -\hl{ 3 }        & 1 - 2       & 3 - 1       & 3 - 2 \\
+    \hline
+    1                 & e4               & 3 - 4       & 2 - 4       & 4 - 3       & 1 - 4 \\
+    \hline
+\end{tabular}
+
+\begin{figure}[h]
+    \hspace{0.5cm}
+    \includegraphics[width=0.8\textwidth]{img/error.png}
+\end{figure}
 
 \section{Conclusion}
-Our implementation of the stable marriage problem, adapted for assigning students to schools with multiple capacities, demonstrates that the Gale-Shapley algorithm can be effectively extended for more complex scenarios. The consistent results and useful visualizations validate the effectiveness of our approach. This project highlights the practical application of theoretical concepts in solving real-world problems.
+\hspace{0.5cm}
+In conclusion, developing this algorithm to solve the stable marriage problem with the complexities of the French Parcoursup system was both challenging and rewarding. We successfully implemented a robust solution that ensures stable matchings, even with multiple capacities for schools. The project allowed us to apply theoretical concepts to a real-world problem, enhancing our understanding and skills in graph theory.
+
+Overall, it was an interesting and cool experience to bring this algorithm to life, and we are pleased with the results and insights gained.
 
 \end{document}
